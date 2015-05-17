@@ -256,7 +256,7 @@ vg_exec_context_calc_address(vg_exec_context_t *vxcp)
 	}
 	len = EC_POINT_point2oct(pgroup,
 				 pubkey,
-				 POINT_CONVERSION_UNCOMPRESSED,
+				 vxcp->vxc_vc->vc_compressed?POINT_CONVERSION_COMPRESSED:POINT_CONVERSION_UNCOMPRESSED,
 				 eckey_buf,
 				 sizeof(eckey_buf),
 				 vxcp->vxc_bnctx);
@@ -528,9 +528,14 @@ vg_output_match_console(vg_context_t *vcp, EC_KEY *pkey, const char *pattern)
 	}
 
 	assert(EC_KEY_check_key(pkey));
-	vg_encode_address(ppnt,
+	if (vcp->vc_compressed){
+		vg_encode_address_compressed(ppnt,EC_KEY_get0_group(pkey)
+			,vcp->vc_pubkeytype,addr_buf);
+	}else{
+		vg_encode_address(ppnt,
 			  EC_KEY_get0_group(pkey),
 			  vcp->vc_pubkeytype, addr_buf);
+	}
 	if (isscript)
 		vg_encode_script_address(ppnt,
 					 EC_KEY_get0_group(pkey),
@@ -550,7 +555,11 @@ vg_output_match_console(vg_context_t *vcp, EC_KEY *pkey, const char *pattern)
 		}
 	}
 	if (!vcp->vc_key_protect_pass) {
-		vg_encode_privkey(pkey, vcp->vc_privtype, privkey_buf);
+		if (vcp->vc_compressed){
+			vg_encode_privkey_compressed(pkey,vcp->vc_privtype,privkey_buf);
+		}else{
+			vg_encode_privkey(pkey, vcp->vc_privtype, privkey_buf);
+		}
 	}
 
 	if (!vcp->vc_result_file || (vcp->vc_verbose > 0)) {
@@ -1668,7 +1677,7 @@ vg_regex_context_add_patterns(vg_context_t *vcp,
 			pcre_study(vcrp->vcr_regex[nres], 0, &pcre_errptr);
 		if (pcre_errptr) {
 			fprintf(stderr, "Regex error: %s\n", pcre_errptr);
-			pcre_free(vcrp->vcr_regex[nres]);
+			free(vcrp->vcr_regex[nres]);
 			continue;
 		}
 		vcrp->vcr_regex_pat[nres] = patterns[i];
@@ -1690,8 +1699,8 @@ vg_regex_context_clear_all_patterns(vg_context_t *vcp)
 	int i;
 	for (i = 0; i < vcrp->base.vc_npatterns; i++) {
 		if (vcrp->vcr_regex_extra[i])
-			pcre_free(vcrp->vcr_regex_extra[i]);
-		pcre_free(vcrp->vcr_regex[i]);
+			free(vcrp->vcr_regex_extra[i]);
+		free(vcrp->vcr_regex[i]);
 	}
 	vcrp->base.vc_npatterns = 0;
 	vcrp->base.vc_npatterns_start = 0;
@@ -1794,9 +1803,9 @@ restart_loop:
 		}
 
 		if (vcrp->base.vc_remove_on_match) {
-			pcre_free(vcrp->vcr_regex[i]);
+			free(vcrp->vcr_regex[i]);
 			if (vcrp->vcr_regex_extra[i])
-				pcre_free(vcrp->vcr_regex_extra[i]);
+				free(vcrp->vcr_regex_extra[i]);
 			nres -= 1;
 			vcrp->base.vc_npatterns = nres;
 			if (!nres) {
