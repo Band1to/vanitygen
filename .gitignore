@@ -4,3 +4,7 @@ keyconv
 oclvanitygen
 oclvanityminer
 vanitygen
+*.obj
+*.exe
+*.dll
+*.pdb

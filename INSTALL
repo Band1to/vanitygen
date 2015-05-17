@@ -9,6 +9,23 @@ Prerequisites:
   - PCRE: http://www.psyon.org/projects/pcre-win32/
   - AMD APP SDK -or- NVIDIA CUDA SDK
 
+
+ Win64:
+ Tools Microsoft Visual Studio 2013,Visual c++
+	- OpenSSL win64_1.0.2a http://www.slproweb.com/products/Win32OpenSSL.html
+	- Pthreads-Win64 2.9.1 http://sourceware.org/pthreads-win32/
+	- OpenCL ADM_APP_SDK   http://developer.amd.com/tools-and-sdks/ 
+	- PCRE 
+
+		compile  pcre
+        1. dowlaod the source code http://www.pcre.org/
+        2. dowload  cmake http://www.cmake.org/
+        3. Configur cmake 
+        4. Generate 
+        5. use vs2013 open project of perc
+        6. build 
+ 
+
 Once you have set up these components, edit the following variables
 in Makefile.Win32 to reflect the paths where these components were
 installed:
