@@ -14,12 +14,12 @@ CPPFLAGS=$(CPPFLAGS) /MD
 LIBS = $(PTHREADS_DIR)\lib\x64\pthreadVC2.lib  $(PCRE_DIR)\lib\x64\pcred.lib  $(OPENSSL_DIR)\lib\libeay32.lib  ws2_32.lib user32.lib advapi32.lib gdi32.lib /LTCG /DEBUG
 OBJS = vanitygen.obj oclvanitygen.obj oclengine.obj oclvanityminer.obj keyconv.obj pattern.obj util.obj winglue.obj
 
-all: vanitygen.exe keyconv.exe
+all: vanitygen64.exe oclvanitygen64.exe
 
-vanitygen.exe: vanitygen.obj pattern.obj util.obj winglue.obj
-	link /NODEFAULTLIB:libcmt.lib  /nologo /out:$@ $** $(LIBS) 
-oclvanitygen.exe: oclvanitygen.obj oclengine.obj pattern.obj util.obj winglue.obj
-	link /NODEFAULTLIB:libcmt.lib   /nologo /out:$@ $** $(LIBS) $(OPENCL_LIBS)
+vanitygen64.exe: vanitygen.obj pattern.obj util.obj winglue.obj
+	link   /NODEFAULTLIB:msvcrtd.lib  /nologo /out:$@ $** $(LIBS) 
+oclvanitygen64.exe: oclvanitygen.obj oclengine.obj pattern.obj util.obj winglue.obj
+	link /NODEFAULTLIB:msvcrtd.lib   /nologo /out:$@ $** $(LIBS) $(OPENCL_LIBS)
 
 oclvanityminer.exe: oclvanityminer.obj oclengine.obj pattern.obj util.obj winglue.obj
 	link  /nologo /out:$@ $** $(LIBS) $(OPENCL_LIBS) $(CURL_LIBS)
@@ -40,4 +40,4 @@ oclvanityminer.obj: oclvanityminer.c
 	@$(CC) /nologo $(CFLAGS_BASE) $(CURL_INCLUDE) /c /Tpoclvanityminer.c /Fo
 
 clean:
-	del vanitygen.exe oclvanitygen.exe oclvanityminer.exe keyconv.exe $(OBJS)
+	del vanitygen64.exe oclvanitygen64.exe oclvanityminer.exe keyconv.exe $(OBJS)
