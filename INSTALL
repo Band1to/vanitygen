@@ -14,6 +14,8 @@ Prerequisites:
  Tools Microsoft Visual Studio 2013,Visual c++
 	- OpenSSL win64_1.0.2a http://www.slproweb.com/products/Win32OpenSSL.html
 	- Pthreads-Win64 2.9.1 http://sourceware.org/pthreads-win32/
+	  This library needs to use "msvcr100.dll", From jdk(C:\Program Files\Java\jdk1.8.0_40\bin) to get this DLL,jdk version 1.8.0_40
+
 	- OpenCL ADM_APP_SDK   http://developer.amd.com/tools-and-sdks/ 
 	- PCRE 
 
